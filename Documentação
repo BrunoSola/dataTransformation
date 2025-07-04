@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Processador de Campos Formatados
+  description: API que formata datas, valores monetários, percentuais e converte números em texto.
+  version: 1.0.0
+servers:
+  - url: https://{api_id}.execute-api.{region}.amazonaws.com/{stage}
+    variables:
+      api_id:
+        default: your-api-id
+      region:
+        default: us-east-1
+      stage:
+        default: prod
+
+paths:
+  /processar:
+    post:
+      summary: Processa e formata campos fornecidos
+      description: Recebe dados e retorna as informações formatadas conforme regras aplicáveis.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                dates:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    inicio: "2025-07-04"
+                dateInWords:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    vencimento: "2025-07-04"
+                numberInWords:
+                  type: object
+                  additionalProperties:
+                    type: number
+                  example:
+                    quantidade: 123
+                numberInWordsFeminine:
+                  type: object
+                  additionalProperties:
+                    type: number
+                  example:
+                    vagas: 2
+                monetaryValue:
+                  type: object
+                  additionalProperties:
+                    type: number
+                  example:
+                    preco: 199.99
+                monetaryValueInWords:
+                  type: object
+                  additionalProperties:
+                    type: string
+                  example:
+                    total: "4567.89"
+                percentageInWords:
+                  type: object
+                  additionalProperties:
+                    type: number
+                  example:
+                    comissao: 15
+                addOneYear:
+                  type: object
+                  additionalProperties:
+                    type: string
+                    format: date
+                  example:
+                    validade: "2024-12-01"
+      responses:
+        '200':
+          description: Retorno com campos processados
+          content:
+            application/json:
+              schema:
+                type: object
+                example:
+                  inicio: "04/07/2025"
+                  vencimento: "4 de julho de 2025"
+                  quantidade: "123 (cento e vinte e três)"
+                  vagas: "2 (duas)"
+                  preco: "R$ 199,99"
+                  total: "R$ 4.567,89 (quatro mil quinhentos e sessenta e sete reais e oitenta e nove centavos)"
+                  comissao: "15% (quinze por cento)"
+                  validade: "2025-12-02"
+        '400':
+          description: Requisição malformada
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: array
+                    items:
+                      type: object
+                      properties:
+                        key:
+                          type: string
+                        message:
+                          type: string
+        '500':
+          description: Erro interno no processamento
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  error:
+                    type: string
+                  details:
+                    type: string
